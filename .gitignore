@@ -1,0 +1,39 @@
+# Secrets (API keys, tokens, etc.) and local-only files (raw footage, tools)
+secrets/
+.env
+.env.*
+# Not a secret: only switches on the local debug mode
+!web/.env.debug
+
+# Dependencies and builds
+node_modules/
+__pycache__/
+*.pyc
+*.egg-info/
+.venv/
+dist/
+build/
+*.tsbuildinfo
+# Vite writes these next to vite.config.ts while starting; they can linger after a crash
+*.timestamp-*.mjs
+
+# Temporary data and caches
+*.log
+.cache/
+.duckdb/
+*.duckdb
+.eslintcache
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+coverage/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.swp
+.vscode/
+.idea/
