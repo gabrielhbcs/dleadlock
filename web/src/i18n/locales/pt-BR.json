@@ -1,0 +1,145 @@
+{
+  "site": {
+    "tagline": "Jogos diários feitos com estatísticas de Deadlock",
+    "language": "Idioma",
+    "disclaimer": "Projeto de fã. Não afiliado à Valve. Dados de deadlock-api.com.",
+    "back": "Todos os jogos",
+    "comingSoon": "Em breve",
+    "play": "Jogar"
+  },
+  "games": {
+    "descent": {
+      "name": "Descida",
+      "description": "Cite os itens que o herói do dia RARAMENTE compra primeiro e mergulhe abaixo da cidade."
+    },
+    "ascent": {
+      "name": "Subida",
+      "description": "Cite os itens que o herói do dia MAIS compra primeiro e suba de volta ao céu."
+    }
+  },
+  "firstItem": {
+    "loading": "Carregando o desafio de hoje…",
+    "noPuzzle": "Ainda não há desafio para {{date}}.",
+    "noPuzzleShort": "O desafio de hoje ainda não está disponível.",
+    "showingLatest": "Mostrando o desafio mais recente disponível ({{date}}).",
+    "error": "Não foi possível carregar o desafio: {{message}}",
+    "heroOfTheDay": "Herói do dia",
+    "modeAscendant": "Partidas ranqueadas Ascendant+",
+    "window": "Últimos 7 dias",
+    "matches": "{{n}} partidas analisadas",
+    "tier": "Tier {{tier}}",
+    "guessOf": "Palpite {{n}} de {{total}}",
+    "placeholder": "Digite o nome de um item…",
+    "noMatch": "Nenhum item corresponde.",
+    "souls": "almas",
+    "timeLeft": "{{s}}s",
+    "timeout": "Tempo esgotado",
+    "never": "Ninguém comprou primeiro",
+    "wrongTier": "Este item é do T{{itemTier}}, não do T{{tier}}",
+    "share": "{{pct}} dos jogadores compraram primeiro",
+    "band": {
+      "legendary": "Lendário",
+      "epic": "Épico",
+      "rare": "Raro",
+      "uncommon": "Incomum",
+      "common": "Comum"
+    },
+    "howTo": {
+      "button": "Como jogar",
+      "title": "Como jogar",
+      "close": "Fechar",
+      "step1": "Todo dia tem um herói do dia: hoje é {{hero}}. As estatísticas vêm de partidas ranqueadas Ascendant+ dos últimos 7 dias.",
+      "typing": "Digite o nome no seu idioma ou em inglês, ou digite t1, t2, t3 ou t4 para listar todos os itens daquele tier.",
+      "zeroRow": "Tier errado, ou ninguém comprou primeiro",
+      "step5": "Você tem {{s}} segundos por palpite. Se o tempo acabar, aquele palpite vale 0."
+    },
+    "results": {
+      "total": "{{souls}} almas",
+      "copy": "Copiar resultado",
+      "copied": "Copiado!",
+      "comeBack": "Um novo desafio começa à meia-noite do seu horário."
+    }
+  },
+  "descent": {
+    "rules": "Em cada tier, cite itens que esse herói raramente compra primeiro. Quanto mais raro o item, mais almas você ganha. Dois palpites por tier.",
+    "layer": {
+      "1": "A Rua",
+      "2": "O Metrô",
+      "3": "Os Túneis",
+      "4": "O Véu"
+    },
+    "distance": "{{m}} m abaixo da cidade",
+    "bonus": "Top {{n}} mais raro!",
+    "howTo": {
+      "step2": "Você desce por 4 camadas da cidade, uma por tier de item (T1 a T4). Em cada camada você tem {{n}} palpites.",
+      "step3": "Cada palpite é um item daquele tier que esse herói RARAMENTE compra primeiro (o primeiro item daquele tier que ele compra na partida).",
+      "step4": "As almas dependem da posição do item no ranking de raridade daquele tier: o mais raro vale {{max}}, o mais comum vale {{min}}, e os pontos caem rápido depois das primeiras posições. Itens empatados valem o mesmo. A cor mostra a faixa:",
+      "topRow": "Item mais raro do tier",
+      "bottomRow": "Item mais comum do tier",
+      "bonusRow": "Bônus: um dos {{n}} mais raros",
+      "step6": "As almas levam você mais fundo abaixo da cidade. No final, compare com as respostas reais e compartilhe seu resultado.",
+      "example": "Dica: os itens óbvios do herói valem pouco. Pense em itens que combinam mal com ele, mas que alguém, em algum lugar, ainda comprou primeiro.",
+      "start": "Começar a descida"
+    },
+    "results": {
+      "title": "Você chegou a {{m}} m",
+      "answers": "Primeiras compras mais raras",
+      "rank": {
+        "0": "Turista",
+        "1": "Andarilho da Rua",
+        "2": "Passageiro do Metrô",
+        "3": "Batedor de Túneis",
+        "4": "Médium",
+        "5": "Lorde do Véu"
+      }
+    }
+  },
+  "ascent": {
+    "rules": "Em cada tier, cite os itens que esse herói mais compra primeiro. Quanto mais popular o item, mais almas você ganha. Dois palpites por tier.",
+    "layer": {
+      "1": "Os Túneis",
+      "2": "O Metrô",
+      "3": "A Rua",
+      "4": "Os Telhados"
+    },
+    "distance": "{{m}} m de subida",
+    "bonus": "Top {{n}} mais escolhido!",
+    "howTo": {
+      "step2": "Você começa nas profundezas da cidade e sobe por 4 camadas, uma por tier de item (T1 a T4). Em cada camada você tem {{n}} palpites.",
+      "step3": "Cada palpite é um item daquele tier que esse herói MAIS compra primeiro (o primeiro item daquele tier que ele compra na partida).",
+      "step4": "As almas dependem da posição do item no ranking de popularidade daquele tier: o mais escolhido vale {{max}}, o menos escolhido vale {{min}}, e os pontos caem rápido depois das primeiras posições. Itens empatados valem o mesmo. A cor mostra a faixa:",
+      "topRow": "Mais comprado primeiro no tier",
+      "bottomRow": "Menos comprado primeiro no tier",
+      "bonusRow": "Bônus: um dos {{n}} mais escolhidos",
+      "step6": "As almas levam você de volta ao céu. No final, compare com as respostas reais e compartilhe seu resultado.",
+      "example": "Dica: pense como um jogador de rank alto. O que esse herói corre para comprar primeiro em cada tier?",
+      "start": "Começar a subida"
+    },
+    "results": {
+      "title": "Você subiu {{m}} m",
+      "answers": "Primeiras compras mais comuns",
+      "rank": {
+        "0": "Perdido no Escuro",
+        "1": "Rato de Túnel",
+        "2": "Escalador do Metrô",
+        "3": "Corredor da Rua",
+        "4": "Saltador de Telhados",
+        "5": "Patrono do Horizonte"
+      }
+    }
+  },
+  "debug": {
+    "title": "Debug",
+    "timer": "Timer",
+    "showAnswers": "Mostrar respostas",
+    "date": "Data do desafio",
+    "today": "hoje",
+    "reset": "Zerar progresso",
+    "rebuild": "Regerar pela API",
+    "refresh": "Ignorar cache da API",
+    "hero": "Id do herói (opcional)",
+    "running": "Rodando o pipeline… (a API SQL aceita ~2 consultas/min)",
+    "done": "Pronto",
+    "failed": "Falhou"
+  }
+}

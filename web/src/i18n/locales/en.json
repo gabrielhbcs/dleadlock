@@ -1,0 +1,145 @@
+{
+  "site": {
+    "tagline": "Daily games built on Deadlock stats",
+    "language": "Language",
+    "disclaimer": "Fan project. Not affiliated with Valve. Data from deadlock-api.com.",
+    "back": "All games",
+    "comingSoon": "Coming soon",
+    "play": "Play"
+  },
+  "games": {
+    "descent": {
+      "name": "Descent",
+      "description": "Name the items the hero of the day RARELY buys first and dive below the city."
+    },
+    "ascent": {
+      "name": "Ascent",
+      "description": "Name the items the hero of the day buys first MOST OFTEN and climb back to the sky."
+    }
+  },
+  "firstItem": {
+    "loading": "Loading today's puzzle…",
+    "noPuzzle": "No puzzle for {{date}} yet.",
+    "noPuzzleShort": "Today's puzzle is not available yet.",
+    "showingLatest": "Showing the latest puzzle available ({{date}}).",
+    "error": "Could not load the puzzle: {{message}}",
+    "heroOfTheDay": "Hero of the day",
+    "modeAscendant": "Ascendant+ ranked matches",
+    "window": "Last 7 days",
+    "matches": "{{n}} matches analyzed",
+    "tier": "Tier {{tier}}",
+    "guessOf": "Guess {{n}} of {{total}}",
+    "placeholder": "Type an item name…",
+    "noMatch": "No item matches.",
+    "souls": "souls",
+    "timeLeft": "{{s}}s",
+    "timeout": "Time's up",
+    "never": "Nobody bought it first",
+    "wrongTier": "This is a T{{itemTier}} item, not T{{tier}}",
+    "share": "{{pct}} of players bought it first",
+    "band": {
+      "legendary": "Legendary",
+      "epic": "Epic",
+      "rare": "Rare",
+      "uncommon": "Uncommon",
+      "common": "Common"
+    },
+    "howTo": {
+      "button": "How to play",
+      "title": "How to play",
+      "close": "Close",
+      "step1": "Every day there is a hero of the day: today it's {{hero}}. The stats come from Ascendant+ ranked matches of the last 7 days.",
+      "typing": "Type the name in your language or in English, or type t1, t2, t3 or t4 to list every item of that tier.",
+      "zeroRow": "Wrong tier, or nobody bought it first",
+      "step5": "You have {{s}} seconds per guess. If time runs out, that guess scores 0."
+    },
+    "results": {
+      "total": "{{souls}} souls",
+      "copy": "Copy result",
+      "copied": "Copied!",
+      "comeBack": "A new puzzle starts at your local midnight."
+    }
+  },
+  "descent": {
+    "rules": "For each tier, name items this hero rarely buys first. The rarer the item, the more souls you earn. Two guesses per tier.",
+    "layer": {
+      "1": "The Street",
+      "2": "The Subway",
+      "3": "The Tunnels",
+      "4": "The Veil"
+    },
+    "distance": "{{m}} m below the city",
+    "bonus": "Rarest {{n}}!",
+    "howTo": {
+      "step2": "You go down through 4 layers of the city, one per item tier (T1 to T4). In each layer you get {{n}} guesses.",
+      "step3": "Each guess is an item of that tier that this hero RARELY buys first (the first item of that tier they buy in a match).",
+      "step4": "Souls depend on the item's position in the rarity ranking of that tier: the rarest scores {{max}}, the most common {{min}}, and points drop fast after the first positions. Tied items score the same. The color shows the band:",
+      "topRow": "Rarest item of the tier",
+      "bottomRow": "Most common item of the tier",
+      "bonusRow": "Bonus: one of the {{n}} rarest",
+      "step6": "Souls take you deeper below the city. At the end, compare with the real answers and share your result.",
+      "example": "Tip: the obvious core items score little. Think of items that fit the hero badly but that someone, somewhere, still bought first.",
+      "start": "Start the descent"
+    },
+    "results": {
+      "title": "You reached {{m}} m",
+      "answers": "Rarest first buys",
+      "rank": {
+        "0": "Tourist",
+        "1": "Street Wanderer",
+        "2": "Subway Rider",
+        "3": "Tunnel Scout",
+        "4": "Medium",
+        "5": "Lord of the Veil"
+      }
+    }
+  },
+  "ascent": {
+    "rules": "For each tier, name the items this hero buys first most often. The more popular the item, the more souls you earn. Two guesses per tier.",
+    "layer": {
+      "1": "The Tunnels",
+      "2": "The Subway",
+      "3": "The Street",
+      "4": "The Rooftops"
+    },
+    "distance": "{{m}} m climbed",
+    "bonus": "Top {{n}} pick!",
+    "howTo": {
+      "step2": "You start deep under the city and climb through 4 layers, one per item tier (T1 to T4). In each layer you get {{n}} guesses.",
+      "step3": "Each guess is an item of that tier that this hero buys first MOST OFTEN (the first item of that tier they buy in a match).",
+      "step4": "Souls depend on the item's position in the popularity ranking of that tier: the most picked scores {{max}}, the least picked {{min}}, and points drop fast after the first positions. Tied items score the same. The color shows the band:",
+      "topRow": "Most picked first in the tier",
+      "bottomRow": "Least picked first in the tier",
+      "bonusRow": "Bonus: one of the {{n}} most picked",
+      "step6": "Souls carry you up toward the sky. At the end, compare with the real answers and share your result.",
+      "example": "Tip: think like a high-rank player. What does this hero rush first in every tier?",
+      "start": "Start the climb"
+    },
+    "results": {
+      "title": "You climbed {{m}} m",
+      "answers": "Most common first buys",
+      "rank": {
+        "0": "Lost in the Dark",
+        "1": "Tunnel Rat",
+        "2": "Subway Climber",
+        "3": "Street Runner",
+        "4": "Rooftop Jumper",
+        "5": "Patron of the Skyline"
+      }
+    }
+  },
+  "debug": {
+    "title": "Debug",
+    "timer": "Timer",
+    "showAnswers": "Show answers",
+    "date": "Puzzle date",
+    "today": "today",
+    "reset": "Reset progress",
+    "rebuild": "Rebuild from API",
+    "refresh": "Ignore API cache",
+    "hero": "Hero id (optional)",
+    "running": "Running pipeline… (the SQL API allows ~2 queries/min)",
+    "done": "Done",
+    "failed": "Failed"
+  }
+}
