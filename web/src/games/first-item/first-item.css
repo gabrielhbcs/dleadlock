@@ -11,16 +11,16 @@
   top: 0;
   height: auto;
   max-width: none;
-  transition: transform 1.4s cubic-bezier(0.22, 0.8, 0.3, 1);
+  transition: transform 2.2s cubic-bezier(0.22, 0.8, 0.3, 1);
   will-change: transform;
   user-select: none;
 }
 
+/* Keeps the panels readable over the painting without hiding it. */
 .parallax-shade {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(13, 11, 20, 0.2), rgba(13, 11, 20, 0.95));
-  transition: opacity 1.4s ease;
+  background: linear-gradient(180deg, rgba(13, 11, 20, 0.45), rgba(13, 11, 20, 0.25) 45%, rgba(13, 11, 20, 0.6));
 }
 
 .first-item {

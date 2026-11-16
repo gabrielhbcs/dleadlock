@@ -69,7 +69,7 @@
       "4": "The Veil"
     },
     "distance": "{{m}} m below the city",
-    "bonus": "Rarest {{n}}!",
+    "bonus": "Rarity bonus",
     "howTo": {
       "step2": "You go down through 4 layers of the city, one per item tier (T1 to T4). In each layer you get {{n}} guesses.",
       "step3": "Each guess is an item of that tier that this hero RARELY buys first (the first item of that tier they buy in a match).",
@@ -103,7 +103,7 @@
       "4": "The Rooftops"
     },
     "distance": "{{m}} m climbed",
-    "bonus": "Top {{n}} pick!",
+    "bonus": "Popularity bonus",
     "howTo": {
       "step2": "You start deep under the city and climb through 4 layers, one per item tier (T1 to T4). In each layer you get {{n}} guesses.",
       "step3": "Each guess is an item of that tier that this hero buys first MOST OFTEN (the first item of that tier they buy in a match).",

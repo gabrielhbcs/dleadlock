@@ -69,7 +69,7 @@
       "4": "O Véu"
     },
     "distance": "{{m}} m abaixo da cidade",
-    "bonus": "Top {{n}} mais raro!",
+    "bonus": "Bônus de raridade",
     "howTo": {
       "step2": "Você desce por 4 camadas da cidade, uma por tier de item (T1 a T4). Em cada camada você tem {{n}} palpites.",
       "step3": "Cada palpite é um item daquele tier que esse herói RARAMENTE compra primeiro (o primeiro item daquele tier que ele compra na partida).",
@@ -103,7 +103,7 @@
       "4": "Os Telhados"
     },
     "distance": "{{m}} m de subida",
-    "bonus": "Top {{n}} mais escolhido!",
+    "bonus": "Bônus de popularidade",
     "howTo": {
       "step2": "Você começa nas profundezas da cidade e sobe por 4 camadas, uma por tier de item (T1 a T4). Em cada camada você tem {{n}} palpites.",
       "step3": "Cada palpite é um item daquele tier que esse herói MAIS compra primeiro (o primeiro item daquele tier que ele compra na partida).",
