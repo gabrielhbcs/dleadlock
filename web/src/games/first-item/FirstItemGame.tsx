@@ -10,13 +10,15 @@ import { DebugPanel } from './DebugPanel';
 import { GuessCard } from './GuessCard';
 import { GuessInput } from './GuessInput';
 import { HowToPlay } from './HowToPlay';
-import { Parallax } from './Parallax';
+import { Parallax, type DepthMarker } from './Parallax';
 import { Results } from './Results';
 import {
   distanceFor,
   evaluate,
   matchesAnalyzed,
+  MAX_DISTANCE_M,
   maxScore,
+  RANK_THRESHOLDS,
   TIMER_SECONDS,
   tierForStep,
   totalGuesses,
@@ -120,7 +122,25 @@ function Board({ config, puzzle, items, heroName, heroImage, fallbackNotice, deb
   const distance = distanceFor(score, max);
   const progress = max ? score / max : 0;
   // Descent sinks from the sky; Ascent starts deep and climbs back up.
-  const depth = config.direction === 'down' ? progress : 1 - progress;
+  const toDepth = useCallback((p: number) => (config.direction === 'down' ? p : 1 - p), [config.direction]);
+  const depth = toDepth(progress);
+
+  // Lines that pass by while moving: a tick every 50 m and one line per title
+  // (the same titles as the results screen) at the distance that unlocks it.
+  const markers = useMemo<DepthMarker[]>(() => {
+    const zones = RANK_THRESHOLDS.map((share, i) => {
+      const m = Math.round(share * MAX_DISTANCE_M);
+      return { at: toDepth(share), label: `${m} m`, zone: t(`${g}.results.rank.${i + 1}`), reached: progress >= share };
+    });
+    const zoneMeters = zones.map((z) => parseInt(z.label, 10));
+    const ticks: DepthMarker[] = [];
+    for (let m = 50; m < MAX_DISTANCE_M; m += 50) {
+      if (zoneMeters.some((z) => Math.abs(z - m) < 20)) continue;
+      const share = m / MAX_DISTANCE_M;
+      ticks.push({ at: toDepth(share), label: `${m} m`, reached: progress >= share });
+    }
+    return [...ticks, ...zones];
+  }, [toDepth, t, g, progress]);
 
   // Side glow after each guess, colored by the band of the answer (red for 0).
   const [flash, setFlash] = useState<{ id: number; band: string } | null>(null);
@@ -147,7 +167,7 @@ function Board({ config, puzzle, items, heroName, heroImage, fallbackNotice, deb
 
   return (
     <div className={`first-item ${config.id}`}>
-      <Parallax depth={depth} />
+      <Parallax depth={depth} markers={markers} here={t('firstItem.youAreHere', { m: distance })} />
       {flash && <div key={flash.id} className={`guess-flash flash-${flash.band}`} aria-hidden="true" />}
 
       <div className="first-item-content">

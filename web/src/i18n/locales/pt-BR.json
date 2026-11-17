@@ -32,6 +32,7 @@
     "placeholder": "Digite o nome de um item…",
     "noMatch": "Nenhum item corresponde.",
     "souls": "almas",
+    "youAreHere": "Você · {{m}} m",
     "timeLeft": "{{s}}s",
     "timeout": "Tempo esgotado",
     "never": "Ninguém comprou primeiro",

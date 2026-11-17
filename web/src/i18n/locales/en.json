@@ -32,6 +32,7 @@
     "placeholder": "Type an item name…",
     "noMatch": "No item matches.",
     "souls": "souls",
+    "youAreHere": "You · {{m}} m",
     "timeLeft": "{{s}}s",
     "timeout": "Time's up",
     "never": "Nobody bought it first",

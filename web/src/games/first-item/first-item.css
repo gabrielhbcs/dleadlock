@@ -23,6 +23,106 @@
   background: linear-gradient(180deg, rgba(13, 11, 20, 0.45), rgba(13, 11, 20, 0.25) 45%, rgba(13, 11, 20, 0.6));
 }
 
+/* Depth lines: they move together with the painting, so they pass by while
+   the player sinks or climbs. */
+.depth-lines {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  transition: transform 2.2s cubic-bezier(0.22, 0.8, 0.3, 1);
+  will-change: transform;
+}
+
+.depth-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 0;
+  border-top: 1px dashed rgba(236, 227, 207, 0.14);
+}
+
+.depth-line.zone {
+  border-top: 1px solid rgba(201, 162, 93, 0.35);
+}
+
+.depth-line.reached {
+  border-top-color: rgba(95, 242, 200, 0.35);
+}
+
+.depth-label {
+  position: absolute;
+  right: 16px;
+  bottom: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-size: 0.75rem;
+  color: rgba(236, 227, 207, 0.45);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+  white-space: nowrap;
+}
+
+.depth-line.zone .depth-label {
+  color: var(--brass);
+}
+
+.depth-line.zone .depth-label strong {
+  font-family: var(--font-display);
+  font-weight: normal;
+  font-size: 1.15rem;
+  letter-spacing: 0.03em;
+}
+
+.depth-line.reached .depth-label {
+  color: var(--soul);
+}
+
+/* "You are here": fixed in the middle of the screen, where the current depth is. */
+.depth-here {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 0;
+  border-top: 2px solid rgba(95, 242, 200, 0.55);
+  box-shadow: 0 0 12px 1px rgba(95, 242, 200, 0.45);
+  animation: depth-here-pulse 2.4s ease-in-out infinite;
+}
+
+.depth-here-label {
+  position: absolute;
+  left: 16px;
+  top: 0;
+  transform: translateY(-50%);
+  padding: 3px 10px 3px 8px;
+  border: 1px solid var(--soul);
+  border-radius: 999px;
+  background: rgba(13, 11, 20, 0.85);
+  color: var(--soul);
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow: 0 0 10px rgba(95, 242, 200, 0.4);
+}
+
+.depth-here-label::before {
+  content: '◆ ';
+}
+
+@keyframes depth-here-pulse {
+  50% {
+    border-top-color: rgba(95, 242, 200, 0.25);
+    box-shadow: 0 0 6px 0 rgba(95, 242, 200, 0.2);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .depth-here {
+    animation: none;
+  }
+}
+
 .first-item {
   position: relative;
 }

@@ -68,10 +68,13 @@ export function distanceFor(score: number, max: number): number {
   return max > 0 ? Math.round((score / max) * MAX_DISTANCE_M) : 0;
 }
 
+/** Share of the max score needed for titles 1..5 (title 0 is below the first). */
+export const RANK_THRESHOLDS = [0.05, 0.2, 0.35, 0.5, 0.7];
+
 /** 0..5 title index from the share of the max score. */
 export function rankIndex(score: number, max: number): number {
   const r = max > 0 ? score / max : 0;
-  return [0.05, 0.2, 0.35, 0.5, 0.7].filter((x) => r >= x).length;
+  return RANK_THRESHOLDS.filter((x) => r >= x).length;
 }
 
 const BAND_EMOJI: Record<BandId, string> = {
