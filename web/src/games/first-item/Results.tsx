@@ -43,26 +43,46 @@ export function Results({ config, puzzle, guesses, items, heroName, score, max, 
 
       <h3>{t(`${g}.results.answers`)}</h3>
       <div className="answers">
-        {puzzle.tiers.map((tier) => (
-          <div key={tier.tier} className="answer-tier">
-            <h4>
-              {t('firstItem.tier', { tier: tier.tier })} · {t(`${g}.layer.${tier.tier}`)}
-            </h4>
-            <ol>
-              {tier.items.slice(0, 5).map((ti) => {
-                const it = items.get(ti.id);
-                const guessed = guesses.some((x) => x.tier === tier.tier && x.itemId === ti.id);
-                return (
-                  <li key={ti.id} className={`band-${ti.band} ${guessed ? 'guessed' : ''}`}>
-                    {it?.image && <img src={it.image} alt="" />}
-                    <span>{it ? localName(it.names, i18n.language) : `#${ti.id}`}</span>
-                    <small>{formatPct(ti.share, i18n.language)}</small>
+        {puzzle.tiers.map((tier) => {
+          const name = (id: number) => {
+            const it = items.get(id);
+            return it ? localName(it.names, i18n.language) : `#${id}`;
+          };
+          const guessed = (id: number) => guesses.some((x) => x.tier === tier.tier && x.itemId === id);
+          // Items of the tier that nobody bought first (they score 0), after the ranking.
+          const listed = new Set(tier.items.map((ti) => ti.id));
+          const never = [...items.values()]
+            .filter((it) => it.tier === tier.tier && !listed.has(it.id))
+            .sort((a, b) => name(a.id).localeCompare(name(b.id), i18n.language));
+          return (
+            <div key={tier.tier} className="answer-tier">
+              <h4>
+                {t('firstItem.tier', { tier: tier.tier })} · {t(`${g}.layer.${tier.tier}`)}
+              </h4>
+              <ol tabIndex={0}>
+                {tier.items.map((ti) => {
+                  const image = items.get(ti.id)?.image;
+                  return (
+                    <li key={ti.id} className={`band-${ti.band} ${guessed(ti.id) ? 'guessed' : ''}`}>
+                      <span className="answer-rank">{ti.rank}</span>
+                      {image && <img src={image} alt="" />}
+                      <span className="answer-name">{name(ti.id)}</span>
+                      <small>{formatPct(ti.share, i18n.language)}</small>
+                    </li>
+                  );
+                })}
+                {never.map((it) => (
+                  <li key={it.id} className={`never ${guessed(it.id) ? 'guessed' : ''}`} title={t('firstItem.never')}>
+                    <span className="answer-rank">–</span>
+                    {it.image && <img src={it.image} alt="" />}
+                    <span className="answer-name">{name(it.id)}</span>
+                    <small>0%</small>
                   </li>
-                );
-              })}
-            </ol>
-          </div>
-        ))}
+                ))}
+              </ol>
+            </div>
+          );
+        })}
       </div>
       <p className="muted">{t('firstItem.results.comeBack')}</p>
     </section>
