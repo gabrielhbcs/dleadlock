@@ -29,11 +29,11 @@ The site is fully static: nothing is computed in the browser.
 ## Publishing
 
 `.github/workflows/weekly.yml` runs every Monday at 03:00 UTC (or by hand from the
-Actions tab). It builds the puzzles from yesterday up to 8 days ahead, commits the
+Actions tab). It builds the puzzles from yesterday up to 10 days ahead, commits the
 new JSON to `main` in one commit and deploys the site to GitHub Pages. It does not
 run on push or pull request.
 
-Each puzzle for day D uses the 7 full UTC days of matches from D-16 to D-10, so one
+Each puzzle for day D uses the 7 full UTC days of matches from D-18 to D-12, so one
 weekly run can build the whole next week from complete days. Puzzles that already
 exist are never rebuilt (players may be in the middle of them) unless you pass
 `--overwrite`.

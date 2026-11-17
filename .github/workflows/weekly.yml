@@ -6,8 +6,8 @@ name: Weekly puzzles
 
 on:
   schedule:
-    # Mondays at 03:00 UTC (00:00 in Brasília). Each run builds up to 8 days
-    # ahead, so a late or failed run still leaves a spare day.
+    # Mondays at 03:00 UTC (00:00 in Brasília). Each run builds up to 10 days
+    # ahead, so a failed run still leaves three spare days to run it by hand.
     - cron: '0 3 * * 1'
   workflow_dispatch:
 
