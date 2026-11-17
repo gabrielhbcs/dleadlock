@@ -1,29 +1,27 @@
-# Once a week: build the next week of daily puzzles from the Deadlock API, commit
-# them to main in a single commit and publish the site on GitHub Pages. It never
-# runs on push or pull request; it can also be started by hand from the Actions
-# tab ("Run workflow"), e.g. to publish code changes before the next run.
-name: Weekly puzzles
+# Twice a week: build the next days of puzzles from the Deadlock API and commit
+# them to main in a single commit, then publish the site (deploy.yml) so the new
+# puzzles go live. It never runs on push or pull request; it can also be started
+# by hand from the Actions tab ("Run workflow").
+name: Puzzles
 
 on:
   schedule:
-    # Mondays at 03:00 UTC (00:00 in Brasília). Each run builds up to 10 days
-    # ahead, so a failed run still leaves three spare days to run it by hand.
-    - cron: '0 3 * * 1'
+    # Mondays and Thursdays at 03:00 UTC (00:00 in Brasília). Each run builds up
+    # to 7 days ahead, so a failed run still leaves three spare days to run it
+    # by hand.
+    - cron: '0 3 * * 1,4'
   workflow_dispatch:
-
-permissions:
-  contents: write # commit the generated data
-  pages: write # publish the site
-  id-token: write # required by deploy-pages
 
 # Never two runs at the same time (they would race on the data commit).
 concurrency:
-  group: weekly
+  group: puzzles
   cancel-in-progress: false
 
 jobs:
-  build:
+  puzzles:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # commit the generated data
     steps:
       - uses: actions/checkout@v5
         with:
@@ -63,28 +61,12 @@ jobs:
             git push origin HEAD:main
           fi
 
-      - uses: actions/setup-node@v5
-        with:
-          node-version: '22'
-          cache: npm
-          cache-dependency-path: web/package-lock.json
-
-      - name: Build site
-        working-directory: web
-        run: |
-          npm ci
-          npm run build
-
-      - uses: actions/upload-pages-artifact@v4
-        with:
-          path: web/dist
-
+  # Publish the site with the new data. A push made by this workflow does not
+  # start other workflows, so the deploy is called from here.
   deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - id: deployment
-        uses: actions/deploy-pages@v4
+    needs: puzzles
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    uses: ./.github/workflows/deploy.yml

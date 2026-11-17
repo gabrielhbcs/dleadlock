@@ -28,13 +28,16 @@ The site is fully static: nothing is computed in the browser.
 
 ## Publishing
 
-`.github/workflows/weekly.yml` runs every Monday at 03:00 UTC (or by hand from the
-Actions tab). It builds the puzzles from yesterday up to 10 days ahead, commits the
-new JSON to `main` in one commit and deploys the site to GitHub Pages. It does not
-run on push or pull request.
+`.github/workflows/puzzles.yml` runs on Mondays and Thursdays at 03:00 UTC (or by hand from the
+Actions tab). It builds the puzzles from yesterday up to 7 days ahead, commits the
+new JSON to `main` in one commit and then runs the deploy below.
 
-Each puzzle for day D uses the 7 full UTC days of matches from D-18 to D-12, so one
-weekly run can build the whole next week from complete days. Puzzles that already
+`.github/workflows/deploy.yml` builds `web/` from `main` and publishes it on GitHub
+Pages. Run it by hand from the Actions tab to publish code changes. Neither
+workflow runs on push or pull request.
+
+Each puzzle for day D uses the 7 full UTC days of matches from D-15 to D-9, so a run
+can build 7 days ahead from complete days only. Puzzles that already
 exist are never rebuilt (players may be in the middle of them) unless you pass
 `--overwrite`.
 
@@ -49,7 +52,7 @@ python -m venv .venv
 .venv/Scripts/python -m dleadlock_pipeline all   # static data + every game
 ```
 
-The generated JSON in `web/public/data/` is committed by the weekly workflow, so
+The generated JSON in `web/public/data/` is committed by the Puzzles workflow, so
 usually a `git pull` is enough to get it.
 
 API responses are cached in `pipeline/.cache/`, so re-running does not hit the API

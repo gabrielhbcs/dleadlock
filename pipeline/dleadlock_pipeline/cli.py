@@ -2,7 +2,7 @@
 
 Examples:
   python -m dleadlock_pipeline static
-  python -m dleadlock_pipeline games                   # every game, UTC yesterday .. today+10
+  python -m dleadlock_pipeline games                   # every game, UTC yesterday .. today+7
   python -m dleadlock_pipeline descent --date 2026-11-15 --hero 13
   python -m dleadlock_pipeline ascent
   python -m dleadlock_pipeline all --refresh           # static + games, ignoring the API cache
