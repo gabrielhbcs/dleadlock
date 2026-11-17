@@ -33,7 +33,8 @@ export function pipelinePlugin(): Plugin {
           res.end();
           return;
         }
-        const args = ['-m', 'dleadlock_pipeline', game];
+        // The debug button always rebuilds, even dates that already exist.
+        const args = ['-m', 'dleadlock_pipeline', game, '--overwrite'];
         const date = url.searchParams.get('date');
         const hero = url.searchParams.get('hero');
         const mode = url.searchParams.get('mode');

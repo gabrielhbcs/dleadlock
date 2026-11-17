@@ -42,7 +42,7 @@ def build_static(api: DeadlockApi) -> StaticData:
         # disabled is None/False for items currently in the shop
         if not it.get("shopable") or it.get("disabled"):
             continue
-        if it.get("item_tier") not in config.DESCENT_TIERS:
+        if it.get("item_tier") not in config.FIRST_ITEM_TIERS:
             continue
         items.append(Item(
             id=it["id"],

@@ -1,0 +1,90 @@
+# Once a week: build the next week of daily puzzles from the Deadlock API, commit
+# them to main in a single commit and publish the site on GitHub Pages. It never
+# runs on push or pull request; it can also be started by hand from the Actions
+# tab ("Run workflow"), e.g. to publish code changes before the next run.
+name: Weekly puzzles
+
+on:
+  schedule:
+    # Mondays at 03:00 UTC (00:00 in Brasília). Each run builds up to 8 days
+    # ahead, so a late or failed run still leaves a spare day.
+    - cron: '0 3 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write # commit the generated data
+  pages: write # publish the site
+  id-token: write # required by deploy-pages
+
+# Never two runs at the same time (they would race on the data commit).
+concurrency:
+  group: weekly
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+
+      # Raw API answers per UTC day, so days shared with the previous run are not
+      # queried again (the SQL API allows ~2 queries/min).
+      - uses: actions/cache@v4
+        with:
+          path: pipeline/.cache
+          key: api-cache-${{ github.run_id }}
+          restore-keys: api-cache-
+
+      - name: Build puzzles
+        working-directory: pipeline
+        run: |
+          # Editable install: the pipeline finds web/public/data relative to the repo.
+          pip install -e .
+          python -m dleadlock_pipeline all
+
+      - name: Commit new data
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add web/public/data
+          if git diff --cached --quiet; then
+            echo 'No new data.'
+          else
+            last=$(ls web/public/data/*/*/????-??-??.json | xargs -n1 basename | sort | tail -1)
+            git commit -m "data: puzzles up to ${last%.json}"
+            # Someone may have pushed to main while the pipeline was running.
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Build site
+        working-directory: web
+        run: |
+          npm ci
+          npm run build
+
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: web/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

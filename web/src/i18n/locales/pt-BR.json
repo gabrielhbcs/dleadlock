@@ -25,7 +25,6 @@
     "error": "Não foi possível carregar o desafio: {{message}}",
     "heroOfTheDay": "Herói do dia",
     "modeAscendant": "Partidas ranqueadas Ascendant+",
-    "window": "Últimos 7 dias",
     "matches": "{{n}} partidas analisadas",
     "tier": "Tier {{tier}}",
     "guessOf": "Palpite {{n}} de {{total}}",
@@ -49,7 +48,7 @@
       "button": "Como jogar",
       "title": "Como jogar",
       "close": "Fechar",
-      "step1": "Todo dia tem um herói do dia: hoje é {{hero}}. As estatísticas vêm de partidas ranqueadas Ascendant+ dos últimos 7 dias.",
+      "step1": "Todo dia tem um herói do dia: hoje é {{hero}}. As estatísticas vêm de uma semana de partidas ranqueadas Ascendant+.",
       "typing": "Digite o nome no seu idioma ou em inglês, ou digite t1, t2, t3 ou t4 para listar todos os itens daquele tier.",
       "zeroRow": "Tier errado, ou ninguém comprou primeiro",
       "step5": "Você tem {{s}} segundos por palpite. Se o tempo acabar, aquele palpite vale 0."

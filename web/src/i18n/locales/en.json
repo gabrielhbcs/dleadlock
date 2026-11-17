@@ -25,7 +25,6 @@
     "error": "Could not load the puzzle: {{message}}",
     "heroOfTheDay": "Hero of the day",
     "modeAscendant": "Ascendant+ ranked matches",
-    "window": "Last 7 days",
     "matches": "{{n}} matches analyzed",
     "tier": "Tier {{tier}}",
     "guessOf": "Guess {{n}} of {{total}}",
@@ -49,7 +48,7 @@
       "button": "How to play",
       "title": "How to play",
       "close": "Close",
-      "step1": "Every day there is a hero of the day: today it's {{hero}}. The stats come from Ascendant+ ranked matches of the last 7 days.",
+      "step1": "Every day there is a hero of the day: today it's {{hero}}. The stats come from one week of Ascendant+ ranked matches.",
       "typing": "Type the name in your language or in English, or type t1, t2, t3 or t4 to list every item of that tier.",
       "zeroRow": "Wrong tier, or nobody bought it first",
       "step5": "You have {{s}} seconds per guess. If time runs out, that guess scores 0."

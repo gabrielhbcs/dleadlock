@@ -33,9 +33,22 @@ RANK_MODES = {
 DEFAULT_MODE = "ascendant-plus"
 
 # Days of matches used for each daily puzzle. Puzzle date D uses the
-# WINDOW_DAYS full UTC days ending two days before D, so tomorrow's puzzle can
-# be built today from complete days only.
+# WINDOW_DAYS full UTC days ending WINDOW_LAG_DAYS before D (D-16 .. D-10).
+# The lag lets one weekly run build the whole next week from complete days only:
+# the furthest puzzle (run day + DAYS_AHEAD) still ends two days before the run.
 WINDOW_DAYS = 7
+WINDOW_LAG_DAYS = 10
+
+# Puzzle dates built by default, relative to today in UTC. Players switch days
+# at their local midnight, so yesterday is still being played somewhere; the
+# weekly run covers the next 7 days plus one spare day in case a run is late.
+DAYS_BEFORE = 1
+DAYS_AHEAD = 8
+
+# A hero picked for any game is not picked again (by any game) for this many
+# days. If every eligible hero was used in that period, the one used longest ago
+# is picked instead.
+HERO_COOLDOWN_DAYS = 10
 
 # A hero needs at least this many player-matches in the window to be picked.
 MIN_HERO_SAMPLES = 1500

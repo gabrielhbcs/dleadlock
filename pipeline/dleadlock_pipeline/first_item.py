@@ -27,8 +27,8 @@ def _query(name: str, **params) -> str:
 
 
 def window_days(puzzle_date: date) -> list[date]:
-    """UTC days used by a puzzle: the WINDOW_DAYS days before yesterday."""
-    last = puzzle_date - timedelta(days=2)
+    """UTC days used by a puzzle (see config.WINDOW_LAG_DAYS)."""
+    last = puzzle_date - timedelta(days=config.WINDOW_LAG_DAYS)
     return [last - timedelta(days=i) for i in range(config.WINDOW_DAYS)][::-1]
 
 
@@ -64,20 +64,25 @@ def eligible_heroes(static: StaticData, counts: Counts) -> list[int]:
     return sorted(h for h, n in samples.items() if n >= config.MIN_HERO_SAMPLES and h in known)
 
 
-def pick_hero(game: str, eligible: list[int], puzzle_date: date, mode: str) -> int:
-    """Deterministic daily pick. Games listed earlier in config.GAMES pick first;
-    a later game skips heroes already taken that day, so games never share one."""
+def pick_hero(game: str, eligible: list[int], puzzle_date: date, mode: str,
+              last_used: dict[int, date] | None = None, same_day: set[int] | None = None) -> int:
+    """Deterministic daily pick from the eligible heroes.
+
+    - same_day: heroes other games already have on this date (never shared).
+    - last_used: hero -> last date any game used it, within HERO_COOLDOWN_DAYS.
+      Those heroes are skipped; if none is left, the ones used longest ago are
+      the candidates instead.
+    """
     if not eligible:
         raise RuntimeError(f"no hero has {config.MIN_HERO_SAMPLES}+ samples for {puzzle_date}")
-    taken: set[int] = set()
-    for g in config.GAMES:
-        seed = int(hashlib.sha256(f"{g}:{mode}:{puzzle_date.isoformat()}".encode()).hexdigest(), 16)
-        free = [h for h in eligible if h not in taken] or eligible
-        hero = free[seed % len(free)]
-        if g == game:
-            return hero
-        taken.add(hero)
-    raise KeyError(game)
+    last_used = last_used or {}
+    pool = [h for h in eligible if h not in (same_day or set())] or eligible
+    fresh = [h for h in pool if h not in last_used]
+    if not fresh:
+        oldest = min(last_used[h] for h in pool)
+        fresh = [h for h in pool if last_used[h] == oldest]
+    seed = int(hashlib.sha256(f"{game}:{mode}:{puzzle_date.isoformat()}".encode()).hexdigest(), 16)
+    return fresh[seed % len(fresh)]
 
 
 def assign_bands(counts: dict[int, int], order: str) -> list[tuple[int, int, int, str]]:
@@ -111,11 +116,12 @@ def points_for(rank: int, n_items: int) -> int:
 
 
 def build_puzzle(game: str, api: DeadlockApi, static: StaticData, puzzle_date: date,
-                 mode: str = config.DEFAULT_MODE, hero_id: int | None = None) -> FirstItemPuzzle:
+                 mode: str = config.DEFAULT_MODE, hero_id: int | None = None,
+                 last_used: dict[int, date] | None = None, same_day: set[int] | None = None) -> FirstItemPuzzle:
     order = config.GAMES[game]["order"]
     counts = window_counts(api, static, puzzle_date, mode)
     if hero_id is None:
-        hero_id = pick_hero(game, eligible_heroes(static, counts), puzzle_date, mode)
+        hero_id = pick_hero(game, eligible_heroes(static, counts), puzzle_date, mode, last_used, same_day)
 
     tiers = []
     for tier in config.FIRST_ITEM_TIERS:

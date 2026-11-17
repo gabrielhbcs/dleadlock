@@ -193,7 +193,6 @@ function Board({ config, puzzle, items, heroName, heroImage, fallbackNotice, deb
           <div className="hero-footer">
             <ul className="meta-chips">
               <li>{t('firstItem.modeAscendant')}</li>
-              <li>{t('firstItem.window')}</li>
               <li>{t('firstItem.matches', { n: new Intl.NumberFormat(i18n.language).format(matchesAnalyzed(puzzle)) })}</li>
             </ul>
             <button className="howto-button" onClick={() => setHelp('ingame')}>
