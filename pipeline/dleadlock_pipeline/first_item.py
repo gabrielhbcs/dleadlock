@@ -26,10 +26,32 @@ def _query(name: str, **params) -> str:
     return sql.format(**params)
 
 
-def window_days(puzzle_date: date) -> list[date]:
-    """UTC days used by a puzzle (see config.WINDOW_LAG_DAYS)."""
-    last = puzzle_date - timedelta(days=config.WINDOW_LAG_DAYS)
-    return [last - timedelta(days=i) for i in range(config.WINDOW_DAYS)][::-1]
+def _days(start: date, end: date) -> list[date]:
+    return [start + timedelta(days=i) for i in range((end - start).days + 1)]
+
+
+def window_days(puzzle_date: date, run_day: date | None = None, patch: date | None = None) -> list[date]:
+    """UTC days used by a puzzle.
+
+    Normally the WINDOW_DAYS days ending WINDOW_LAG_DAYS before the puzzle.
+    With a patch date (and a puzzle after it), only days from the patch on:
+    the normal window cut at the patch, or, if that leaves fewer than
+    MIN_PATCH_DAYS, the freshest complete days as of run_day. If there is not
+    enough data after the patch yet, the normal window is used.
+    """
+    end = puzzle_date - timedelta(days=config.WINDOW_LAG_DAYS)
+    if patch is not None and puzzle_date > patch:
+        post_end = end
+        if run_day is not None:
+            # The latest complete day: the API needs about two days to have them all.
+            latest = min(run_day, puzzle_date) - timedelta(days=2)
+            post_end = min(end, latest)
+            if (post_end - patch).days + 1 < config.MIN_PATCH_DAYS:
+                post_end = latest
+        if (post_end - patch).days + 1 >= config.MIN_PATCH_DAYS:
+            start = max(post_end - timedelta(days=config.WINDOW_DAYS - 1), patch)
+            return _days(start, post_end)
+    return _days(end - timedelta(days=config.WINDOW_DAYS - 1), end)
 
 
 def daily_counts(api: DeadlockApi, static: StaticData, day: date, mode: str) -> Counts:
@@ -46,22 +68,22 @@ def daily_counts(api: DeadlockApi, static: StaticData, day: date, mode: str) -> 
     return {(r["hero_id"], r["tier"], r["item_id"]): r["n"] for r in rows}
 
 
-def window_counts(api: DeadlockApi, static: StaticData, puzzle_date: date, mode: str) -> Counts:
+def window_counts(api: DeadlockApi, static: StaticData, days: list[date], mode: str) -> Counts:
     total: Counts = defaultdict(int)
-    for day in window_days(puzzle_date):
+    for day in days:
         for key, n in daily_counts(api, static, day, mode).items():
             total[key] += n
     return dict(total)
 
 
-def eligible_heroes(static: StaticData, counts: Counts) -> list[int]:
+def eligible_heroes(static: StaticData, counts: Counts, min_samples: int = config.MIN_HERO_SAMPLES) -> list[int]:
     # Samples per hero = player-matches that bought at least one T1 item.
     samples: dict[int, int] = defaultdict(int)
     for (hero, tier, _), n in counts.items():
         if tier == 1:
             samples[hero] += n
     known = {h.id for h in static.heroes}
-    return sorted(h for h, n in samples.items() if n >= config.MIN_HERO_SAMPLES and h in known)
+    return sorted(h for h, n in samples.items() if n >= min_samples and h in known)
 
 
 def pick_hero(game: str, eligible: list[int], puzzle_date: date, mode: str,
@@ -74,7 +96,7 @@ def pick_hero(game: str, eligible: list[int], puzzle_date: date, mode: str,
       the candidates instead.
     """
     if not eligible:
-        raise RuntimeError(f"no hero has {config.MIN_HERO_SAMPLES}+ samples for {puzzle_date}")
+        raise RuntimeError(f"no hero has enough samples for {puzzle_date}")
     last_used = last_used or {}
     pool = [h for h in eligible if h not in (same_day or set())] or eligible
     fresh = [h for h in pool if h not in last_used]
@@ -117,11 +139,16 @@ def points_for(rank: int, n_items: int) -> int:
 
 def build_puzzle(game: str, api: DeadlockApi, static: StaticData, puzzle_date: date,
                  mode: str = config.DEFAULT_MODE, hero_id: int | None = None,
-                 last_used: dict[int, date] | None = None, same_day: set[int] | None = None) -> FirstItemPuzzle:
+                 last_used: dict[int, date] | None = None, same_day: set[int] | None = None,
+                 run_day: date | None = None, patch: date | None = None) -> FirstItemPuzzle:
     order = config.GAMES[game]["order"]
-    counts = window_counts(api, static, puzzle_date, mode)
+    days = window_days(puzzle_date, run_day, patch)
+    counts = window_counts(api, static, days, mode)
     if hero_id is None:
-        hero_id = pick_hero(game, eligible_heroes(static, counts), puzzle_date, mode, last_used, same_day)
+        # A short post-patch window has fewer matches: scale the minimum with it.
+        min_samples = math.ceil(config.MIN_HERO_SAMPLES * len(days) / config.WINDOW_DAYS)
+        hero_id = pick_hero(game, eligible_heroes(static, counts, min_samples), puzzle_date, mode,
+                            last_used, same_day)
 
     tiers = []
     for tier in config.FIRST_ITEM_TIERS:
@@ -135,7 +162,6 @@ def build_puzzle(game: str, api: DeadlockApi, static: StaticData, puzzle_date: d
         ]
         tiers.append(TierResult(tier=tier, total=total, items=items))
 
-    days = window_days(puzzle_date)
     return FirstItemPuzzle(
         game=game,
         order=order,

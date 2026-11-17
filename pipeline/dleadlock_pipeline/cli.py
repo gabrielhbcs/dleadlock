@@ -7,9 +7,14 @@ Examples:
   python -m dleadlock_pipeline ascent
   python -m dleadlock_pipeline all --refresh           # static + games, ignoring the API cache
   python -m dleadlock_pipeline descent --date 2026-11-15 --overwrite
+  python -m dleadlock_pipeline all --patch-date 2026-11-20   # after a balance patch
 
 Puzzles that already exist are kept as they are (players may be in the middle of
 them); pass --overwrite to build them again.
+
+--patch-date saves the date of the latest balance patch (web/public/data/patch.json).
+From then on no puzzle mixes matches from before it (see config.MIN_PATCH_DAYS), and
+future puzzles (after today, UTC) that were built with older matches are rebuilt.
 """
 
 import argparse
@@ -20,7 +25,7 @@ from pathlib import Path
 from . import config
 from .api import DeadlockApi
 from .assets import build_static
-from .first_item import build_puzzle
+from .first_item import build_puzzle, window_days
 from .models import PuzzleIndex, StaticData
 
 
@@ -80,27 +85,63 @@ def _hero_history(out: Path, game: str, mode: str, d: date) -> tuple[dict[int, d
     return last_used, same_day
 
 
+def _patch_path(out: Path) -> Path:
+    return out / "patch.json"
+
+
+def _load_patch(out: Path) -> date | None:
+    p = _patch_path(out)
+    if not p.exists():
+        return None
+    return date.fromisoformat(json.loads(p.read_text(encoding="utf-8"))["date"])
+
+
+def _save_patch(out: Path, patch: date) -> None:
+    p = _patch_path(out)
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_text(json.dumps({"date": patch.isoformat()}), encoding="utf-8")
+    print(f"wrote {_show(p)}")
+
+
+def _stale_after_patch(path: Path, d: date, today: date, patch: date | None) -> bool:
+    """A puzzle nobody can be playing yet (after today, UTC) that was built with
+    matches from before the patch, while matches after it are now available."""
+    if patch is None or d <= today:
+        return False
+    built_from = date.fromisoformat(json.loads(path.read_text(encoding="utf-8"))["window_start"])
+    return built_from < patch <= window_days(d, today, patch)[0]
+
+
 def cmd_games(games: list[str], api: DeadlockApi, out: Path, dates: list[date], mode: str,
               hero: int | None, overwrite: bool = False) -> None:
     static = _load_static(api, out)
+    today = _today()
+    patch = _load_patch(out)
     # Day by day, every game on each day: the hero history of a day must include
     # all the days before it, from every game.
     for d in sorted(dates):
         for game in games:
             path = _puzzle_path(out, game, mode, d)
             if path.exists() and not overwrite:
-                print(f"kept {_show(path)} (already exists)")
-                continue
+                if not _stale_after_patch(path, d, today, patch):
+                    print(f"kept {_show(path)} (already exists)")
+                    continue
+                print(f"rebuilding {_show(path)} with matches after the {patch} patch")
             last_used, same_day = _hero_history(out, game, mode, d)
-            _write(path, build_puzzle(game, api, static, d, mode, hero, last_used, same_day))
+            _write(path, build_puzzle(game, api, static, d, mode, hero, last_used, same_day,
+                                      run_day=today, patch=patch))
     for game in games:
         mode_dir = out / game / mode
         available = sorted(p.stem for p in mode_dir.glob("????-??-??.json"))
         _write(mode_dir / "index.json", PuzzleIndex(mode=mode, dates=available))
 
 
+def _today() -> date:
+    return datetime.now(timezone.utc).date()
+
+
 def default_dates() -> list[date]:
-    today = datetime.now(timezone.utc).date()
+    today = _today()
     return [today + timedelta(days=i) for i in range(-config.DAYS_BEFORE, config.DAYS_AHEAD + 1)]
 
 
@@ -114,15 +155,30 @@ def main() -> None:
     p.add_argument("--hero", type=int, help="force a hero id instead of the daily pick")
     p.add_argument("--refresh", action="store_true", help="ignore the local API cache")
     p.add_argument("--overwrite", action="store_true", help="rebuild puzzles that already exist")
+    p.add_argument("--patch-date", type=date.fromisoformat,
+                   help="UTC day a balance patch went live: later puzzles only use matches after it")
     p.add_argument("--out", type=Path, default=config.WEB_DATA_DIR)
     a = p.parse_args()
+
+    if a.patch_date is not None:
+        if a.patch_date > _today():
+            p.error("--patch-date cannot be in the future")
+        _save_patch(a.out, a.patch_date)
 
     api = DeadlockApi(refresh=a.refresh)
     if a.command in ("static", "all"):
         cmd_static(api, a.out)
     games = list(config.GAMES) if a.command in ("games", "all") else [a.command] if a.command in config.GAMES else []
     if games:
-        cmd_games(games, api, a.out, a.date or default_dates(), a.mode, a.hero, a.overwrite)
+        dates = a.date
+        if dates is None:
+            # Also every future puzzle built earlier, so all of them get the
+            # post-patch check (some may be further ahead than DAYS_AHEAD).
+            future = {date.fromisoformat(p.stem) for g in games
+                      for p in (a.out / g / a.mode).glob("????-??-??.json")
+                      if date.fromisoformat(p.stem) > _today()}
+            dates = sorted(set(default_dates()) | future)
+        cmd_games(games, api, a.out, dates, a.mode, a.hero, a.overwrite)
     print(json.dumps({"ok": True}))
 
 

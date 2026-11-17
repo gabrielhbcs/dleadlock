@@ -41,6 +41,16 @@ can build 7 days ahead from complete days only. Puzzles that already
 exist are never rebuilt (players may be in the middle of them) unless you pass
 `--overwrite`.
 
+### After a balance patch
+
+Run the Puzzles workflow by hand with the patch day (UTC) in the "patch_date" field,
+3 or more days after the patch. It saves the date in `web/public/data/patch.json`
+and rebuilds every future puzzle (after today, UTC) using only complete days of
+matches from after the patch (at least 2). From then on no puzzle mixes matches
+from before the patch; the window grows back to 7 days as new days come in. Today's
+and past puzzles are never changed. Locally: `python -m dleadlock_pipeline all
+--patch-date YYYY-MM-DD`.
+
 ## Running locally
 
 Pipeline (Python 3.12+):

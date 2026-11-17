@@ -51,8 +51,15 @@ DAYS_AHEAD = 7
 # is picked instead.
 HERO_COOLDOWN_DAYS = 10
 
-# A hero needs at least this many player-matches in the window to be picked.
+# A hero needs at least this many player-matches in a full window to be picked
+# (scaled down for the shorter windows used right after a patch).
 MIN_HERO_SAMPLES = 1500
+
+# After a balance patch (see web/public/data/patch.json, set with --patch-date),
+# a puzzle never mixes matches from before the patch: it uses only the complete
+# days after it, and if its normal window has fewer than MIN_PATCH_DAYS of them,
+# the freshest complete days at build time instead (two days before the run).
+MIN_PATCH_DAYS = 2
 
 # Bands (label and color only). Items bought first at least once in a tier are
 # sorted from best to worst answer (rarest first in Descent, most common first
