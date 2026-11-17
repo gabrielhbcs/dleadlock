@@ -20,8 +20,8 @@ Each game picks a different hero every day.
 ```
 pipeline/   Python: queries the Deadlock API and writes static JSON for the site
 web/        React + Vite + TypeScript site (hub + one route per game)
-  public/data/       generated JSON (static.json, <game>/<mode>/<date>.json)
-  public/descent/    parallax layers for the Descent background
+  public/data/         generated JSON (static.json, <game>/<mode>/<date>.json)
+  public/backgrounds/  background painting shared by Descent and Ascent
 ```
 
 The site is fully static: a scheduled job runs the pipeline and publishes the JSON
